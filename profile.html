@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ludo King Profile</title>
   <style>
-    /* CSS থাকবে আগের মতোই */
     body {
       background-color: #f7f7f7;
       font-family: 'Arial', sans-serif;
@@ -24,11 +23,6 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       width: 360px;
       text-align: center;
-      transition: all 0.3s ease-in-out;
-    }
-
-    .profile-container:hover {
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
 
     .header {
@@ -130,14 +124,14 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
       authDomain: "fir-bot-bd5e8.firebaseapp.com",
       databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
       projectId: "fir-bot-bd5e8",
-      storageBucket: "fir-bot-bd5e8.firebasestorage.app",
+      storageBucket: "fir-bot-bd5e8.appspot.com",
       messagingSenderId: "501448994050",
       appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
       measurementId: "G-3ERPTBHN6N"
@@ -153,49 +147,53 @@
     const logoutBtn = document.getElementById('logoutBtn');
 
     function generateUID() {
-      return Math.floor(1000000000 + Math.random() * 9000000000); // 10 digit number
+      return Math.floor(1000000000 + Math.random() * 9000000000).toString();
     }
 
-   onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const uid = user.uid;
-    const email = user.email;
-    const userRef = doc(db, "users", uid);
-    const docSnap = await getDoc(userRef);
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const email = user.email;
+        const userRef = doc(db, "users", uid);
+        const docSnap = await getDoc(userRef);
 
-    let playerName, customUID;
+        let playerName, customUID;
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      playerName = data.playerName || `Player${Math.floor(Math.random() * 10000)}`;
-      customUID = data.customUID;
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          playerName = data.playerName || `Player${Math.floor(Math.random() * 10000)}`;
+          customUID = data.customUID;
 
-      // যদি customUID না থাকে, তখন নতুন জেনারেট করে সেভ করবো
-      if (!customUID) {
-        customUID = generateUID();
-        await setDoc(userRef, { ...data, customUID }, { merge: true });
+          if (!customUID) {
+            customUID = generateUID();
+            await setDoc(userRef, { ...data, customUID }, { merge: true });
+          }
+        } else {
+          playerName = `Player${Math.floor(Math.random() * 10000)}`;
+          customUID = generateUID();
+          await setDoc(userRef, {
+            playerName,
+            email,
+            uid,
+            customUID,
+            coins: 1000,
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        playerNameEl.textContent = playerName;
+        emailEl.textContent = email;
+        uidEl.textContent = customUID ? customUID : "Not Found";
+      } else {
+        window.location.href = "login.html";
       }
-    } else {
-      playerName = `Player${Math.floor(Math.random() * 10000)}`;
-      customUID = generateUID();
-      await setDoc(userRef, {
-        playerName,
-        email,
-        uid,
-        customUID,
-        coins: 1000
-      });
-    }
+    });
 
-    playerNameEl.textContent = playerName;
-    emailEl.textContent = email;
-    uidEl.textContent = customUID ? customUID : "Not Found";
-  } else {
-    window.location.href = "login.html";
-  }
-});
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
     });
   </script>
-
 </body>
 </html>
