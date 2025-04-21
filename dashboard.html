@@ -17,7 +17,7 @@
 <body class="bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] min-h-screen text-white relative">
   <!-- Top Bar -->
   <div class="flex justify-between items-center px-5 py-4 shadow-md bg-[#1f1f2f]">
-    <img id="profileIcon" src="https://assets.onecompiler.app/43ea4pg72/43ffwhbqa/user.png" class="w-11 h-11 rounded-full border-2 border-yellow-400 cursor-pointer hover:scale-105 transition" />
+    <img id="profileIcon" src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" class="w-11 h-11 rounded-full border-2 border-yellow-400 cursor-pointer hover:scale-105 transition" />
     <div class="flex items-center gap-2">
       <img src="https://assets.onecompiler.app/43ea4pg72/43ffv5jhq/coin.png" class="w-6 h-6" />
       <span id="coinCount" class="font-bold text-yellow-400 text-lg">0</span>
@@ -71,26 +71,30 @@
 
       const uid = user.uid;
       const email = user.email;
-      const coinRef = db.ref("users/" + uid + "/coins");
-      const nameRef = db.ref("users/" + uid + "/name");
+      const userRef = db.ref("users/" + uid);
 
-      coinRef.once("value").then(snapshot => {
+      userRef.once("value").then(snapshot => {
         if (!snapshot.exists()) {
-          coinRef.set(1000);
-          document.getElementById("coinCount").innerText = "1000";
+          const name = "Player" + Math.floor(Math.random() * 10000);
+          userRef.set({
+            name: name,
+            coins: 1000,
+            lastClaim: 0,
+            email: email
+          });
+          document.getElementById("coinCount").innerText = 1000;
         } else {
-          document.getElementById("coinCount").innerText = snapshot.val();
+          const data = snapshot.val();
+          document.getElementById("coinCount").innerText = data.coins || 0;
         }
       });
 
-      // Show profile data on modal
+      // Profile Click
       document.getElementById("profileIcon").addEventListener("click", () => {
-        nameRef.once("value").then(nameSnap => {
-          const name = nameSnap.val() || ("Player" + Math.floor(Math.random() * 10000));
-          db.ref("users/" + uid + "/name").set(name); // Save random name if not set
-
-          document.getElementById("playerName").innerText = name;
-          document.getElementById("playerEmail").innerText = email;
+        userRef.once("value").then(snapshot => {
+          const data = snapshot.val();
+          document.getElementById("playerName").innerText = data.name || "Player";
+          document.getElementById("playerEmail").innerText = data.email || email;
           document.getElementById("playerUID").innerText = uid;
           document.getElementById("profileModal").classList.remove("hidden");
         });
@@ -100,20 +104,27 @@
     function claimFreeCoins() {
       const user = auth.currentUser;
       if (!user) return;
+
       const uid = user.uid;
-      const lastClaimRef = db.ref("users/" + uid + "/lastClaim");
-      const coinRef = db.ref("users/" + uid + "/coins");
-      lastClaimRef.once("value").then(snapshot => {
-        const now = Date.now();
-        const lastClaim = snapshot.val() || 0;
+      const now = Date.now();
+      const userRef = db.ref("users/" + uid);
+
+      userRef.once("value").then(snapshot => {
+        const data = snapshot.val();
+        const lastClaim = data.lastClaim || 0;
+        const coins = data.coins || 0;
+
         if (now - lastClaim >= 86400000) {
-          coinRef.transaction(current => (current || 0) + 70);
-          lastClaimRef.set(now);
-          alert("You received 70 free coins!");
-          window.location.reload();
+          userRef.update({
+            coins: coins + 70,
+            lastClaim: now
+          }).then(() => {
+            alert("You received 70 free coins!");
+            location.reload();
+          });
         } else {
           const remaining = 24 - Math.floor((now - lastClaim) / 3600000);
-          alert(`Please wait ${remaining} more hour(s) for your next free coins.`);
+          alert(`Please wait ${remaining} more hour(s) to claim free coins.`);
         }
       });
     }
