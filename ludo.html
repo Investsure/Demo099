@@ -1,90 +1,173 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Join Ludo Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Premium Ludo Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to bottom right, #1f1c2c, #928dab);
-      color: #fff;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
     }
+
     .container {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 25px;
-      padding: 30px 20px;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-    }
-    .container img {
-      width: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 30px;
       border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8);
+      text-align: center;
+      max-width: 500px;
+      width: 95%;
+      animation: fadeIn 1.2s ease;
+    }
+
+    .logo {
+      width: 150px;
       margin-bottom: 20px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
-    h2 {
-      margin: 10px 0;
-      font-size: 24px;
-      color: #fff;
-    }
-    .info {
-      font-size: 14px;
+
+    h1 {
+      font-size: 2.5rem;
       margin-bottom: 15px;
-      color: #ddd;
+      background: linear-gradient(90deg, #ff00cc, #3333ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
     }
-    input, button {
-      width: 100%;
-      padding: 12px;
+
+    .btn {
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, #ff00cc, #3333ff);
+      color: #fff;
       border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
-    input {
-      background-color: #fff;
-      color: #000;
-      font-weight: 500;
-    }
-    button {
-      background: linear-gradient(to right, #ff4b2b, #ff416c);
-      color: #fff;
-      font-weight: bold;
+      border-radius: 50px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: 0.3s ease;
+      margin-top: 20px;
+      box-shadow: 0 0 15px rgba(255, 0, 204, 0.4);
     }
-    button:hover {
-      transform: scale(1.03);
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 0, 204, 0.6);
     }
-    #status {
-      color: #ffdfba;
-      font-size: 14px;
+
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: rgba(0,0,0,0.75);
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .popup {
+      background: #111;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    }
+
+    .popup h2 {
+      margin-bottom: 15px;
+      font-size: 1.7rem;
+      color: #f0f0f0;
+    }
+
+    .popup p {
+      font-size: 1rem;
+      color: #ccc;
+      margin-bottom: 25px;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .popup .btn {
+      width: 100px;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff00cc; }
+      to { text-shadow: 0 0 20px #3333ff; }
+    }
+
+    @media(max-width: 500px) {
+      h1 { font-size: 2rem; }
+      .btn { font-size: 1rem; padding: 12px 25px; }
+    }
+
+    .warning-popup p {
+      font-size: 1.1rem;
+      color: #ff3d3d;
       font-weight: bold;
     }
+
+    .warning-popup .btn {
+      background: #ff3d3d;
+      margin-top: 15px;
+    }
+
   </style>
 </head>
 <body>
+
   <div class="container">
-    <img src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148690493.webp" alt="Ludo Game Cover">
-    <h2>Join Ludo Game</h2>
-    <p class="info">Entry Fee: ৭০ কয়েন | জয়ী পাবেন: ১৪০ কয়েন</p>
-    <input type="text" id="roomCode" placeholder="Enter Room Code" />
-    <button onclick="joinRoom()">জয়েন করুন</button>
-    <p id="status"></p>
-    <p class="info" id="playerCount"></p>
-  </div>  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-    import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+    <img src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148690493.webp" class="logo" alt="Ludo Logo">
+    <h1>King of Ludo Match 👑</h1>
+    <button class="btn" id="playButton">Play Now</button>
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup">
+      <h2>Confirm Match</h2>
+      <p>This match will cost <strong>70 Coins 🪙</strong>. Continue?</p>
+      <div class="popup-buttons">
+        <button class="btn" id="yesBtn">Yes</button>
+        <button class="btn" id="noBtn">No</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warning Popup for Insufficient Coins -->
+  <div class="popup-overlay warning-popup" id="warningPopup">
+    <div class="popup">
+      <h2>Insufficient Coins</h2>
+      <p>Oops! আপনার অ্যাকাউন্টে পর্যাপ্ত Coin নেই। দয়া করে Coin কিনুন।</p>
+      <button class="btn" id="buyCoinsBtn">Buy Coins</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
@@ -100,58 +183,51 @@
     const db = getDatabase(app);
     const auth = getAuth();
 
-    let currentUID = null;
+    const playBtn = document.getElementById('playButton');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const warningPopup = document.getElementById('warningPopup');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const buyCoinsBtn = document.getElementById('buyCoinsBtn');
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUID = user.uid;
-      } else {
-        document.getElementById("status").textContent = "Please login first.";
-      }
+    playBtn.addEventListener('click', () => {
+      popupOverlay.style.display = 'flex';
     });
 
-    function joinRoom() {
-      const roomCode = document.getElementById("roomCode").value;
-      const status = document.getElementById("status");
-      if (!roomCode) return status.textContent = "Room code দিন";
-      if (!currentUID) return status.textContent = "লগইন করতে হবে";
+    noBtn.addEventListener('click', () => {
+      popupOverlay.style.display = 'none';
+      window.location.href = "dashboard.html";
+    });
 
-      const roomRef = ref(db, `ludoRooms/${roomCode}`);
-      get(roomRef).then(snapshot => {
-        if (!snapshot.exists()) return status.textContent = "রুম পাওয়া যায়নি";
+    yesBtn.addEventListener('click', () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          const uid = user.uid;
+          const userRef = ref(db, 'users/' + uid);
 
-        const room = snapshot.val();
-        const players = room.players || [];
+          get(userRef).then(snapshot => {
+            if (snapshot.exists()) {
+              let balance = snapshot.val().coins || 0;
 
-        if (players.includes(currentUID)) return status.textContent = "আপনি ইতিমধ্যে জয়েন করেছেন";
-        if (players.length >= 2) return status.textContent = "রুম পূর্ণ";
-
-        const userRef = ref(db, `users/${currentUID}`);
-        get(userRef).then(userSnap => {
-          const userData = userSnap.val();
-          const coins = userData.coins || 0;
-          if (coins < 70) return status.textContent = "কয়েন যথেষ্ট নেই";
-
-          update(userRef, { coins: coins - 70 });
-          const updatedPlayers = [...players, currentUID];
-          update(roomRef, { players: updatedPlayers });
-          status.textContent = "সফলভাবে জয়েন হয়েছে";
-          window.location.href = "game.html?room=" + roomCode;
-        });
-      });
-    }
-
-    document.getElementById("roomCode").addEventListener("input", (e) => {
-      const roomCode = e.target.value;
-      const roomRef = ref(db, `ludoRooms/${roomCode}`);
-      onValue(roomRef, snapshot => {
-        if (snapshot.exists()) {
-          const players = snapshot.val().players || [];
-          document.getElementById("playerCount").textContent = `Players Joined: ${players.length}/2`;
+              if (balance >= 70) {
+                update(userRef, { coins: balance - 70 }).then(() => {
+                  window.location.href = "play.html";
+                });
+              } else {
+                popupOverlay.style.display = 'none';
+                warningPopup.style.display = 'flex';
+              }
+            }
+          });
         } else {
-          document.getElementById("playerCount").textContent = "";
+          alert("Please login first!");
         }
       });
     });
-  </script></body>
+
+    buyCoinsBtn.addEventListener('click', () => {
+      window.location.href = "buy.html";
+    });
+  </script>
+</body>
 </html>
