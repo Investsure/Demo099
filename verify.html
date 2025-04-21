@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>লেনদেন যাচাই</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    h1::after {
+      content: "";
+      font-size: 12px;
+      color: gold;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #000;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .pay-box {
+      background: #fff;
+      color: #000;
+      padding: 15px 20px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .pay-box img {
+      width: 35px;
+      margin-right: 10px;
+    }
+
+    .pay-box div {
+      display: flex;
+      align-items: center;
+    }
+
+    .copy-btn {
+      background: #009688;
+      color: #fff;
+      padding: 6px 15px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .amount-info {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #ffd700;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px;
+      background: #ff3d00;
+      border: none;
+      color: white;
+      font-size: 17px;
+      border-radius: 50px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .summary {
+      margin-top: 30px;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      display: none;
+    }
+
+    .summary p {
+      margin: 10px 0;
+    }
+
+    .summary h2 {
+      color: #90ee90;
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>লেনদেন যাচাই করুন</h1>
+
+    <div class="pay-box" id="payInfo">
+      <div>
+        <img id="payLogo" src="" alt="">
+        <span id="payNumber">নাম্বার লোড হচ্ছে...</span>
+      </div>
+      <button class="copy-btn" onclick="copyNumber()">কপি</button>
+    </div>
+
+    <div class="amount-info" id="sendAmount">Send Money: ৳ Loading...</div>
+
+    <label>লেনদেন আইডি দিন:</label>
+    <input type="text" id="trxId" placeholder="Ex: TXNxxxxx">
+
+    <button class="submit-btn" onclick="submitForm()">সাবমিট করুন</button>
+
+    <div class="summary" id="summaryBox">
+      <h2>আপনার অনুরোধ গ্রহণ করা হয়েছে!</h2>
+      <p><strong>কয়েন:</strong> <span id="sumCoin"></span></p>
+      <p><strong>পেমেন্ট:</strong> <span id="sumPayment"></span></p>
+      <p><strong>পেমেন্ট নাম্বার:</strong> <span id="sumNumber"></span></p>
+      <p><strong>ট্রানজেকশন আইডি:</strong> <span id="sumTrx"></span></p>
+      <p><strong>UID:</strong> <span id="sumUid"></span></p>
+      <p style="margin-top: 20px;">দয়া করে কিছুক্ষণ অপেক্ষা করুন। যাচাই শেষে কয়েন অ্যাড করা হবে।</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
+      authDomain: "fir-bot-bd5e8.firebaseapp.com",
+      projectId: "fir-bot-bd5e8",
+      storageBucket: "fir-bot-bd5e8.appspot.com",
+      messagingSenderId: "501448994050",
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getFirestore();
+
+    let selectedCoin = localStorage.getItem("selectedCoin");
+    let selectedAmount = localStorage.getItem("selectedAmount");
+    let paymentMethod = localStorage.getItem("paymentMethod");
+    let uid = "";
+
+    const payNumber = document.getElementById("payNumber");
+    const payLogo = document.getElementById("payLogo");
+    const sendAmount = document.getElementById("sendAmount");
+
+    // Set Payment Info
+    if (paymentMethod?.includes("বিকাশ")) {
+      payNumber.textContent = "01318645435";
+      payLogo.src = "https://assets.onecompiler.app/43ea4pg72/43eq73f47/download%20(3).png";
+    } else if (paymentMethod?.includes("নগদ")) {
+      payNumber.textContent = "01855966005";
+      payLogo.src = "https://assets.onecompiler.app/43ea4pg72/43eq73f47/download%20(2).png";
+    }
+    sendAmount.textContent = `Send Money: ৳${selectedAmount}`;
+
+    function copyNumber() {
+      navigator.clipboard.writeText(payNumber.textContent);
+      alert("পেমেন্ট নাম্বার কপি হয়েছে!");
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) uid = user.uid;
+    });
+
+    window.submitForm = async () => {
+      const trxId = document.getElementById("trxId").value.trim();
+      if (!trxId) return alert("লেনদেন আইডি দিন!");
+
+      const data = {
+        uid,
+        selectedCoin: Number(selectedCoin),
+        selectedAmount: Number(selectedAmount),
+        paymentMethod,
+        payNumber: payNumber.textContent,
+        trxId,
+        timestamp: Date.now()
+      };
+
+      await setDoc(doc(db, "transactions", uid + "_" + Date.now()), data);
+
+      document.getElementById("sumCoin").textContent = `${selectedCoin} কয়েন`;
+      document.getElementById("sumPayment").textContent = paymentMethod;
+      document.getElementById("sumTrx").textContent = trxId;
+      document.getElementById("sumUid").textContent = uid;
+      document.getElementById("sumNumber").textContent = payNumber.textContent;
+      document.querySelector(".submit-btn").style.display = "none";
+      document.getElementById("summaryBox").style.display = "block";
+    }
+  </script>
+</body>
+</html>
