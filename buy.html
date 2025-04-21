@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>কয়েন কিনুন</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #141e30, #243b55);
+      color: #fff;
+    }
+    .container {
+      max-width: 750px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+    }
+    h1 {
+      font-size: 30px;
+      font-weight: 600;
+    }
+    .balance {
+      background: rgba(255,255,255,0.08);
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: inline-block;
+      font-size: 16px;
+    }
+    .notice {
+      background: #ffd600;
+      color: #000;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      margin: 20px 0;
+      font-weight: 500;
+    }
+    .coins {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .coin-card {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 15px;
+      width: 180px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      position: relative;
+      border: 2px solid transparent;
+    }
+    .coin-card img {
+      width: 40px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .coin-card:hover, .coin-card.selected {
+      background: #00c853;
+      transform: scale(1.05);
+      border-color: #00e676;
+    }
+    .payment-options {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    .payment-btn {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #eeeeee;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: bold;
+      width: 90%;
+      max-width: 400px;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+    .payment-btn img {
+      width: 40px;
+    }
+    .payment-btn.selected, .payment-btn:hover {
+      background: #00e676;
+      border-color: #00c853;
+    }
+    .summary-box {
+      margin-top: 25px;
+      background: rgba(255,255,255,0.1);
+      border-left: 5px solid #00e676;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 16px;
+    }
+    .next-btn {
+      margin-top: 30px;
+      padding: 14px 32px;
+      background: #ff3d00;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .next-btn:hover {
+      background: #ff5722;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" alt="Coin Logo" class="logo">
+    <h1>King Of Ludo Coin Store</h1>
+    <div class="balance">বর্তমান কয়েন: <span id="coin-balance">লোড হচ্ছে...</span></div>
+
+    <div class="notice">আপনার প্রয়োজনীয় কয়েন এবং পেমেন্ট মাধ্যম নির্বাচন করুন।</div>
+
+    <div class="coins">
+      <div class="coin-card" onclick="selectCoin(this, 1000, 50)">
+        <img src="https://assets.onecompiler.app/43ea4pg72/43ffv5jhq/coin.png" alt="coin">
+        <div>1000 কয়েন<br>৳50</div>
+      </div>
+      <div class="coin-card" onclick="selectCoin(this, 2500, 100)">
+        <img src="https://assets.onecompiler.app/43ea4pg72/43ffv5jhq/coin.png" alt="coin">
+        <div>2500 কয়েন<br>৳100</div>
+      </div>
+      <div class="coin-card" onclick="selectCoin(this, 5000, 200)">
+        <img src="https://assets.onecompiler.app/43ea4pg72/43ffv5jhq/coin.png" alt="coin">
+        <div>5000 কয়েন<br>৳200</div>
+      </div>
+    </div>
+
+    <div class="payment-options">
+      <div class="payment-btn" onclick="selectPayment(this, 'বিকাশ - 01318645435')">
+        <img src="https://assets.onecompiler.app/43ea4pg72/43eq73f47/download%20(3).png" alt="bkash"> বিকাশ - 01318645435
+      </div>
+      <div class="payment-btn" onclick="selectPayment(this, 'নগদ - 01855966005')">
+        <img src="https://assets.onecompiler.app/43ea4pg72/43eq73f47/download%20(2).png" alt="nagad"> নগদ - 01855966005
+      </div>
+    </div>
+
+    <div class="summary-box" id="summary">
+      এখনো কিছু নির্বাচন করা হয়নি।
+    </div>
+
+    <button class="next-btn" onclick="proceed()">পরবর্তী</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
+      authDomain: "fir-bot-bd5e8.firebaseapp.com",
+      databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
+      projectId: "fir-bot-bd5e8",
+      storageBucket: "fir-bot-bd5e8.appspot.com",
+      messagingSenderId: "501448994050",
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getDatabase();
+
+    let selectedCoin = 0;
+    let selectedAmount = 0;
+    let selectedPayment = "";
+
+    // Coin select
+    window.selectCoin = function(el, coin, amount) {
+      document.querySelectorAll(".coin-card").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedCoin = coin;
+      selectedAmount = amount;
+      updateSummary();
+    }
+
+    // Payment select
+    window.selectPayment = function(el, method) {
+      document.querySelectorAll(".payment-btn").forEach(b => b.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedPayment = method;
+      updateSummary();
+    }
+
+    // Update live summary
+    function updateSummary() {
+      let text = "";
+      if (selectedCoin) text += `✔️ কয়েন: ${selectedCoin} (৳${selectedAmount})<br>`;
+      if (selectedPayment) text += `✔️ পেমেন্ট: ${selectedPayment}`;
+      if (!text) text = "এখনো কিছু নির্বাচন করা হয়নি।";
+      document.getElementById("summary").innerHTML = text;
+    }
+
+    // Proceed to verify
+    window.proceed = function() {
+      if (!selectedCoin || !selectedPayment) {
+        alert("দয়া করে কয়েন এবং পেমেন্ট মাধ্যম নির্বাচন করুন");
+        return;
+      }
+      localStorage.setItem("selectedCoin", selectedCoin);
+      localStorage.setItem("selectedAmount", selectedAmount);
+      localStorage.setItem("paymentMethod", selectedPayment);
+      window.location.href = "verify.html";
+    }
+
+    // Load user coin balance
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        get(ref(db, "users/" + uid)).then(snapshot => {
+          const data = snapshot.val();
+          document.getElementById("coin-balance").innerText = data?.coin ?? 0;
+        });
+      } else {
+        document.getElementById("coin-balance").innerText = "লগইন প্রয়োজন";
+      }
+    });
+  </script>
+</body>
+</html>
