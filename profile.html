@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ludo King Profile</title>
   <style>
+    /* CSS থাকবে আগের মতোই */
     body {
       background-color: #f7f7f7;
       font-family: 'Arial', sans-serif;
@@ -101,13 +102,11 @@
 <body>
 
   <div class="profile-container">
-    <!-- Header with logo and Ludo King title -->
     <div class="header">
       <img src="https://img.icons8.com/ios/50/000000/crown.png" alt="Ludo King Logo" class="logo">
       <h1> King of Ludo </h1>
     </div>
 
-    <!-- Profile info -->
     <div class="profile-info">
       <div class="info-item">
         <img src="https://assets.onecompiler.app/43ea4pg72/43ffwhbqa/user.png" alt="Name Icon">
@@ -125,7 +124,6 @@
       </div>
     </div>
 
-    <!-- Logout button -->
     <button id="logoutBtn">Logout</button>
   </div>
 
@@ -154,33 +152,40 @@
     const uidEl = document.getElementById('uid');
     const logoutBtn = document.getElementById('logoutBtn');
 
+    function generateUID() {
+      return Math.floor(1000000000 + Math.random() * 9000000000); // 10 digit number
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
         const email = user.email;
-
         const userRef = doc(db, "users", uid);
         const docSnap = await getDoc(userRef);
 
-        let playerName;
+        let playerName, customUID;
 
         if (docSnap.exists()) {
-          playerName = docSnap.data().playerName;
+          const data = docSnap.data();
+          playerName = data.playerName;
+          customUID = data.customUID;
         } else {
           playerName = `Player${Math.floor(Math.random() * 10000)}`;
+          customUID = generateUID();
           await setDoc(userRef, {
-            playerName: playerName,
-            email: email,
-            uid: uid,
-            coins: 1000, // Default signup bonus
+            playerName,
+            email,
+            uid,
+            customUID,
+            coins: 1000
           });
         }
 
         playerNameEl.textContent = playerName;
         emailEl.textContent = email;
-        uidEl.textContent = `${uid.slice(0, 1)}${Math.floor(Math.random() * 1000000000)}`; // Generate 10 digit UID
+        uidEl.textContent = customUID;
       } else {
-        window.location.href = "login.html"; // redirect if not logged in
+        window.location.href = "login.html";
       }
     });
 
