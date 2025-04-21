@@ -30,9 +30,18 @@
       background: rgba(255,255,255,0.08);
       padding: 12px 20px;
       border-radius: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       display: inline-block;
       font-size: 16px;
+    }
+    .uid-box {
+      margin: 10px 0;
+      font-size: 14px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 8px;
+      display: inline-block;
+      user-select: all;
     }
     .notice {
       background: #ffd600;
@@ -132,6 +141,7 @@
     <img src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" alt="Coin Logo" class="logo">
     <h1>King Of Ludo Coin Store</h1>
     <div class="balance">বর্তমান কয়েন: <span id="coin-balance">লোড হচ্ছে...</span></div>
+    <div class="uid-box">UID: <span id="uid-display">লোড হচ্ছে...</span></div>
 
     <div class="notice">আপনার প্রয়োজনীয় কয়েন এবং পেমেন্ট মাধ্যম নির্বাচন করুন।</div>
 
@@ -188,6 +198,8 @@
     let selectedCoin = 0;
     let selectedAmount = 0;
     let selectedPayment = "";
+    let currentCoin = 0;
+    let currentUID = "";
 
     // Coin select
     window.selectCoin = function(el, coin, amount) {
@@ -209,7 +221,11 @@
     // Update live summary
     function updateSummary() {
       let text = "";
-      if (selectedCoin) text += `✔️ কয়েন: ${selectedCoin} (৳${selectedAmount})<br>`;
+      if (selectedCoin) {
+        const total = currentCoin + selectedCoin;
+        text += `✔️ কয়েন: ${selectedCoin} (৳${selectedAmount})<br>`;
+        text += `✔️ সর্বমোট কয়েন: ${currentCoin} + ${selectedCoin} = <b>${total}</b><br>`;
+      }
       if (selectedPayment) text += `✔️ পেমেন্ট: ${selectedPayment}`;
       if (!text) text = "এখনো কিছু নির্বাচন করা হয়নি।";
       document.getElementById("summary").innerHTML = text;
@@ -224,19 +240,23 @@
       localStorage.setItem("selectedCoin", selectedCoin);
       localStorage.setItem("selectedAmount", selectedAmount);
       localStorage.setItem("paymentMethod", selectedPayment);
+      localStorage.setItem("userUID", currentUID);
       window.location.href = "verify.html";
     }
 
     // Load user coin balance
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const uid = user.uid;
-        get(ref(db, "users/" + uid)).then(snapshot => {
+        currentUID = user.uid;
+        document.getElementById("uid-display").innerText = currentUID;
+        get(ref(db, "users/" + user.uid)).then(snapshot => {
           const data = snapshot.val();
-          document.getElementById("coin-balance").innerText = data?.coin ?? 0;
+          currentCoin = data?.coin ?? 0;
+          document.getElementById("coin-balance").innerText = currentCoin;
         });
       } else {
         document.getElementById("coin-balance").innerText = "লগইন প্রয়োজন";
+        document.getElementById("uid-display").innerText = "N/A";
       }
     });
   </script>
