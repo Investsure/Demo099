@@ -26,23 +26,6 @@
       font-size: 30px;
       font-weight: 600;
     }
-    .balance {
-      background: rgba(255,255,255,0.08);
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-bottom: 10px;
-      display: inline-block;
-      font-size: 16px;
-    }
-    .uid-box {
-      margin: 10px 0;
-      font-size: 14px;
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 8px;
-      display: inline-block;
-      user-select: all;
-    }
     .notice {
       background: #ffd600;
       color: #000;
@@ -133,6 +116,15 @@
     .next-btn:hover {
       background: #ff5722;
     }
+    .uid-box {
+      margin-top: 15px;
+      font-size: 14px;
+      opacity: 0.85;
+      background: rgba(255,255,255,0.08);
+      padding: 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -140,8 +132,8 @@
   <div class="container">
     <img src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" alt="Coin Logo" class="logo">
     <h1>King Of Ludo Coin Store</h1>
-    <div class="balance">বর্তমান কয়েন: <span id="coin-balance">লোড হচ্ছে...</span></div>
-    <div class="uid-box">UID: <span id="uid-display">লোড হচ্ছে...</span></div>
+
+    <div class="uid-box" id="uid-box">UID: লোড হচ্ছে...</div>
 
     <div class="notice">আপনার প্রয়োজনীয় কয়েন এবং পেমেন্ট মাধ্যম নির্বাচন করুন।</div>
 
@@ -179,12 +171,10 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
       authDomain: "fir-bot-bd5e8.firebaseapp.com",
-      databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
       projectId: "fir-bot-bd5e8",
       storageBucket: "fir-bot-bd5e8.appspot.com",
       messagingSenderId: "501448994050",
@@ -193,15 +183,12 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
-    const db = getDatabase();
 
     let selectedCoin = 0;
     let selectedAmount = 0;
     let selectedPayment = "";
-    let currentCoin = 0;
     let currentUID = "";
 
-    // Coin select
     window.selectCoin = function(el, coin, amount) {
       document.querySelectorAll(".coin-card").forEach(c => c.classList.remove("selected"));
       el.classList.add("selected");
@@ -210,7 +197,6 @@
       updateSummary();
     }
 
-    // Payment select
     window.selectPayment = function(el, method) {
       document.querySelectorAll(".payment-btn").forEach(b => b.classList.remove("selected"));
       el.classList.add("selected");
@@ -218,20 +204,14 @@
       updateSummary();
     }
 
-    // Update live summary
     function updateSummary() {
       let text = "";
-      if (selectedCoin) {
-        const total = currentCoin + selectedCoin;
-        text += `✔️ কয়েন: ${selectedCoin} (৳${selectedAmount})<br>`;
-        text += `✔️ সর্বমোট কয়েন: ${currentCoin} + ${selectedCoin} = <b>${total}</b><br>`;
-      }
+      if (selectedCoin) text += `✔️ কয়েন: ${selectedCoin} (৳${selectedAmount})<br>`;
       if (selectedPayment) text += `✔️ পেমেন্ট: ${selectedPayment}`;
       if (!text) text = "এখনো কিছু নির্বাচন করা হয়নি।";
       document.getElementById("summary").innerHTML = text;
     }
 
-    // Proceed to verify
     window.proceed = function() {
       if (!selectedCoin || !selectedPayment) {
         alert("দয়া করে কয়েন এবং পেমেন্ট মাধ্যম নির্বাচন করুন");
@@ -244,19 +224,13 @@
       window.location.href = "verify.html";
     }
 
-    // Load user coin balance
+    // Auth check and UID show
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUID = user.uid;
-        document.getElementById("uid-display").innerText = currentUID;
-        get(ref(db, "users/" + user.uid)).then(snapshot => {
-          const data = snapshot.val();
-          currentCoin = data?.coin ?? 0;
-          document.getElementById("coin-balance").innerText = currentCoin;
-        });
+        document.getElementById("uid-box").innerText = "UID: " + user.uid;
       } else {
-        document.getElementById("coin-balance").innerText = "লগইন প্রয়োজন";
-        document.getElementById("uid-display").innerText = "N/A";
+        document.getElementById("uid-box").innerText = "লগইন প্রয়োজন";
       }
     });
   </script>
