@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join Ludo Room</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom right, #1f1c2c, #928dab);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 25px;
+      padding: 30px 20px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+    .container img {
+      width: 100%;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 24px;
+      color: #fff;
+    }
+    .info {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    input {
+      background-color: #fff;
+      color: #000;
+      font-weight: 500;
+    }
+    button {
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.03);
+    }
+    #status {
+      color: #ffdfba;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148690493.webp" alt="Ludo Game Cover">
+    <h2>Join Ludo Game</h2>
+    <p class="info">Entry Fee: ৭০ কয়েন | জয়ী পাবেন: ১৪০ কয়েন</p>
+    <input type="text" id="roomCode" placeholder="Enter Room Code" />
+    <button onclick="joinRoom()">জয়েন করুন</button>
+    <p id="status"></p>
+    <p class="info" id="playerCount"></p>
+  </div>  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
+      authDomain: "fir-bot-bd5e8.firebaseapp.com",
+      databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
+      projectId: "fir-bot-bd5e8",
+      storageBucket: "fir-bot-bd5e8.appspot.com",
+      messagingSenderId: "501448994050",
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth();
+
+    let currentUID = null;
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUID = user.uid;
+      } else {
+        document.getElementById("status").textContent = "Please login first.";
+      }
+    });
+
+    function joinRoom() {
+      const roomCode = document.getElementById("roomCode").value;
+      const status = document.getElementById("status");
+      if (!roomCode) return status.textContent = "Room code দিন";
+      if (!currentUID) return status.textContent = "লগইন করতে হবে";
+
+      const roomRef = ref(db, `ludoRooms/${roomCode}`);
+      get(roomRef).then(snapshot => {
+        if (!snapshot.exists()) return status.textContent = "রুম পাওয়া যায়নি";
+
+        const room = snapshot.val();
+        const players = room.players || [];
+
+        if (players.includes(currentUID)) return status.textContent = "আপনি ইতিমধ্যে জয়েন করেছেন";
+        if (players.length >= 2) return status.textContent = "রুম পূর্ণ";
+
+        const userRef = ref(db, `users/${currentUID}`);
+        get(userRef).then(userSnap => {
+          const userData = userSnap.val();
+          const coins = userData.coins || 0;
+          if (coins < 70) return status.textContent = "কয়েন যথেষ্ট নেই";
+
+          update(userRef, { coins: coins - 70 });
+          const updatedPlayers = [...players, currentUID];
+          update(roomRef, { players: updatedPlayers });
+          status.textContent = "সফলভাবে জয়েন হয়েছে";
+          window.location.href = "game.html?room=" + roomCode;
+        });
+      });
+    }
+
+    document.getElementById("roomCode").addEventListener("input", (e) => {
+      const roomCode = e.target.value;
+      const roomRef = ref(db, `ludoRooms/${roomCode}`);
+      onValue(roomRef, snapshot => {
+        if (snapshot.exists()) {
+          const players = snapshot.val().players || [];
+          document.getElementById("playerCount").textContent = `Players Joined: ${players.length}/2`;
+        } else {
+          document.getElementById("playerCount").textContent = "";
+        }
+      });
+    });
+  </script></body>
+</html>
