@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>King of Ludo - Premium Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <style>
+    .floating-label {
+      position: relative;
+    }
+    .floating-label input {
+      background-color: transparent;
+      border: 1px solid #374151;
+      padding: 1rem;
+      width: 100%;
+      border-radius: 0.75rem;
+      color: white;
+    }
+    .floating-label label {
+      position: absolute;
+      left: 1rem;
+      top: 1rem;
+      background-color: #1f2937;
+      padding: 0 0.25rem;
+      color: #9ca3af;
+      pointer-events: none;
+      transform-origin: left;
+      transition: all 0.2s ease;
+    }
+    .floating-label input:focus + label,
+    .floating-label input:not(:placeholder-shown) + label {
+      transform: translateY(-1.6rem) scale(0.85);
+      color: #facc15;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-900 min-h-screen flex items-center justify-center px-4">
+  <div class="bg-[#1f2937] p-8 rounded-3xl shadow-2xl max-w-md w-full text-center">
+
+    <!-- Logo and Name -->
+    <img src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" class="w-20 mx-auto mb-4 rounded-xl shadow-lg"/>
+    <h1 class="text-4xl font-extrabold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent mb-8">King of Ludo</h1>
+
+    <!-- Form -->
+    <div id="form-area">
+      <!-- Email -->
+      <div class="floating-label mb-5">
+        <input id="email" type="email" placeholder=" " class="peer" required />
+        <label>Email Address</label>
+      </div>
+
+      <!-- Password -->
+      <div class="floating-label mb-5">
+        <input id="password" type="password" placeholder=" " class="peer" required />
+        <label>Password</label>
+      </div>
+
+      <!-- Verify Human -->
+      <div class="flex items-center justify-between bg-gray-800 px-4 py-2 rounded-xl mb-5">
+        <input type="checkbox" id="verify" class="accent-yellow-400 w-5 h-5"/>
+        <label for="verify" class="ml-3 text-sm text-gray-300">I am a human</label>
+      </div>
+
+      <!-- Action Button -->
+      <button id="actionBtn" class="w-full py-3 bg-yellow-400 text-black font-bold rounded-xl hover:bg-yellow-300 transition">Login</button>
+
+      <!-- Toggle -->
+      <p class="text-sm mt-4 text-gray-400">
+        <span id="toggleText">Don't have an account?</span>
+        <button id="switchBtn" class="text-yellow-400 underline ml-1">Sign Up</button>
+      </p>
+
+      <!-- Status -->
+      <p id="status" class="text-sm text-red-400 mt-4"></p>
+    </div>
+  </div>
+
+  <!-- Firebase Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
+      authDomain: "fir-bot-bd5e8.firebaseapp.com",
+      databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
+      projectId: "fir-bot-bd5e8",
+      storageBucket: "fir-bot-bd5e8.firebasestorage.app",
+      messagingSenderId: "501448994050",
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
+      measurementId: "G-3ERPTBHN6N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
+    const status = document.getElementById("status");
+    const actionBtn = document.getElementById("actionBtn");
+    const switchBtn = document.getElementById("switchBtn");
+    const toggleText = document.getElementById("toggleText");
+    const verify = document.getElementById("verify");
+
+    let isLogin = true;
+
+    // Auto Login
+    onAuthStateChanged(auth, (user) => {
+      if (user) window.location.href = "dashboard.html";
+    });
+
+    // Toggle
+    switchBtn.onclick = () => {
+      isLogin = !isLogin;
+      actionBtn.textContent = isLogin ? "Login" : "Sign Up";
+      toggleText.textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+      switchBtn.textContent = isLogin ? "Sign Up" : "Login";
+      status.textContent = "";
+    };
+
+    // Handle Login or Sign Up
+    actionBtn.onclick = () => {
+      if (!verify.checked) {
+        status.textContent = "Please verify you're a human.";
+        return;
+      }
+
+      const mail = email.value.trim();
+      const pass = password.value.trim();
+
+      if (!mail || !pass) {
+        status.textContent = "Fill all fields.";
+        return;
+      }
+
+      if (isLogin) {
+        signInWithEmailAndPassword(auth, mail, pass)
+          .then(() => window.location.href = "dashboard.html")
+          .catch(err => status.textContent = err.message);
+      } else {
+        createUserWithEmailAndPassword(auth, mail, pass)
+          .then(() => window.location.href = "dashboard.html")
+          .catch(err => status.textContent = err.message);
+      }
+    };
+  </script>
+</body>
+</html>
