@@ -1,54 +1,60 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>King of Ludo - Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <style>
     body { font-family: 'Poppins', sans-serif; }
   </style>
 </head>
 <body class="bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] min-h-screen text-white relative">
+
   <!-- Top Bar -->
   <div class="flex justify-between items-center px-5 py-4 shadow-md bg-[#1f1f2f]">
-    <img id="profileIcon" src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png" class="w-11 h-11 rounded-full border-2 border-yellow-400 cursor-pointer hover:scale-105 transition" />
+    <img id="profileIcon" src="https://assets.onecompiler.app/43ea4pg72/43ffnbtyg/dice-game.png"
+      class="w-11 h-11 rounded-full border-2 border-yellow-400 cursor-pointer hover:scale-105 transition" />
     <div class="flex items-center gap-2">
       <img src="https://assets.onecompiler.app/43ea4pg72/43ffv5jhq/coin.png" class="w-6 h-6" />
       <span id="coinCount" class="font-bold text-yellow-400 text-lg">0</span>
     </div>
-    <button onclick="window.location.href='buy.html'" class="bg-yellow-400 hover:bg-yellow-500 px-4 py-1.5 rounded-full text-black font-bold text-sm shadow-md">Buy Coins</button>
-  </div>  <!-- Content -->  <div class="px-4 py-6 space-y-8">
+    <button onclick="window.location.href='buy.html'"
+      class="bg-yellow-400 hover:bg-yellow-500 px-4 py-1.5 rounded-full text-black font-bold text-sm shadow-md">Buy
+      Coins</button>
+  </div>
+
+  <!-- Content -->
+  <div class="px-4 py-6 space-y-8">
     <!-- Ludo Play Box -->
-    <div onclick="window.location.href='ludo.html'" class="bg-[#2e2e4d] rounded-2xl overflow-hidden shadow-2xl transform transition hover:scale-105 cursor-pointer">
-      <img src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148687822.webp" class="w-full h-44 object-cover" />
+    <div onclick="window.location.href='ludo.html'"
+      class="bg-[#2e2e4d] rounded-2xl overflow-hidden shadow-2xl transform transition hover:scale-105 cursor-pointer">
+      <img
+        src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148687822.webp"
+        class="w-full h-44 object-cover" />
       <div class="p-4 text-2xl font-bold text-center tracking-wide text-white">Ludo Online Play</div>
     </div>
-  </div>  <!-- Bottom Navigation -->  <div class="fixed bottom-0 left-0 right-0 bg-[#1c1c2b] flex justify-around items-center p-4 border-t border-gray-700 text-white text-sm">
-    <button onclick="window.location.href='support.html'" class="flex flex-col items-center hover:text-yellow-300 transition">
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div
+    class="fixed bottom-0 left-0 right-0 bg-[#1c1c2b] flex justify-around items-center p-4 border-t border-gray-700 text-white text-sm">
+    <button onclick="window.location.href='support.html'"
+      class="flex flex-col items-center hover:text-yellow-300 transition">
       <img src="https://assets.onecompiler.app/43ea4pg72/43ejgfyu4/24-hours.png" class="w-7 h-7 mb-1" />
       <span>Support</span>
-    </button><button onclick="claimFreeCoins()" class="flex flex-col items-center hover:text-green-400 transition">
-  <img src="https://assets.onecompiler.app/43ea4pg72/43ffv96rw/roulette.png" class="w-7 h-7 mb-1" />
-  <span>Free Coins</span>
-</button>
+    </button>
+    <button onclick="claimFreeCoins()" class="flex flex-col items-center hover:text-green-400 transition">
+      <img src="https://assets.onecompiler.app/43ea4pg72/43ffv96rw/roulette.png" class="w-7 h-7 mb-1" />
+      <span>Free Coins</span>
+    </button>
+  </div>
 
-  </div>  <!-- Footer -->  <footer class="text-center text-xs text-gray-400 mt-10 mb-3">
-    Developed by <span class="text-yellow-300 font-semibold">Swygen Official</span>
-  </footer>  <!-- Profile Modal -->  <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-70 hidden justify-center items-center z-50">
-    <div class="bg-[#2e2e4d] rounded-xl p-6 w-80 text-white relative">
-      <button onclick="document.getElementById('profileModal').classList.add('hidden')" class="absolute top-2 right-3 text-xl">&times;</button>
-      <h2 class="text-lg font-bold mb-4">Your Profile</h2>
-      <p><strong>Username:</strong> <span id="playerName"></span></p>
-      <p><strong>Email:</strong> <span id="playerEmail"></span></p>
-      <p><strong>UID:</strong> <span id="playerUID"></span></p>
-    </div>
-  </div>  <!-- Firebase Script -->  <script>
+  <!-- Firebase Initialization -->
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
       authDomain: "fir-bot-bd5e8.firebaseapp.com",
@@ -56,7 +62,8 @@
       projectId: "fir-bot-bd5e8",
       storageBucket: "fir-bot-bd5e8.appspot.com",
       messagingSenderId: "501448994050",
-      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
+      measurementId: "G-3ERPTBHN6N"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -83,21 +90,16 @@
             email: email
           });
           document.getElementById("coinCount").innerText = 1000;
+          alert("Welcome! You've received 1000 coins as signup bonus.");
         } else {
           const data = snapshot.val();
           document.getElementById("coinCount").innerText = data.coins || 0;
         }
       });
 
-      // Profile Click
+      // Redirect to profile page
       document.getElementById("profileIcon").addEventListener("click", () => {
-        userRef.once("value").then(snapshot => {
-          const data = snapshot.val();
-          document.getElementById("playerName").innerText = data.name || "Player";
-          document.getElementById("playerEmail").innerText = data.email || email;
-          document.getElementById("playerUID").innerText = uid;
-          document.getElementById("profileModal").classList.remove("hidden");
-        });
+        window.location.href = "profile.html";
       });
     });
 
@@ -128,5 +130,6 @@
         }
       });
     }
-  </script></body>
+  </script>
+</body>
 </html>
