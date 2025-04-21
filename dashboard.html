@@ -1,3 +1,4 @@
+<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +9,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <style>
-    body { font-family: 'Poppins', sans-serif; }
-  </style>
 </head>
 <body class="bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] min-h-screen text-white relative">
 
@@ -23,25 +21,21 @@
       <span id="coinCount" class="font-bold text-yellow-400 text-lg">0</span>
     </div>
     <button onclick="window.location.href='buy.html'"
-      class="bg-yellow-400 hover:bg-yellow-500 px-4 py-1.5 rounded-full text-black font-bold text-sm shadow-md">Buy
-      Coins</button>
+      class="bg-yellow-400 hover:bg-yellow-500 px-4 py-1.5 rounded-full text-black font-bold text-sm shadow-md">Buy Coins</button>
   </div>
 
   <!-- Content -->
   <div class="px-4 py-6 space-y-8">
-    <!-- Ludo Play Box -->
     <div onclick="window.location.href='ludo.html'"
       class="bg-[#2e2e4d] rounded-2xl overflow-hidden shadow-2xl transform transition hover:scale-105 cursor-pointer">
-      <img
-        src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148687822.webp"
+      <img src="https://assets.onecompiler.app/43ea4pg72/43ffnwx9q/people-playing-ludo-game_23-2148687822.webp"
         class="w-full h-44 object-cover" />
-      <div class="p-4 text-2xl font-bold text-center tracking-wide text-white">Ludo Online Play</div>
+      <div class="p-4 text-2xl font-bold text-center text-white">Ludo Online Play</div>
     </div>
   </div>
 
   <!-- Bottom Navigation -->
-  <div
-    class="fixed bottom-0 left-0 right-0 bg-[#1c1c2b] flex justify-around items-center p-4 border-t border-gray-700 text-white text-sm">
+  <div class="fixed bottom-0 left-0 right-0 bg-[#1c1c2b] flex justify-around items-center p-4 border-t border-gray-700 text-white text-sm">
     <button onclick="window.location.href='support.html'"
       class="flex flex-col items-center hover:text-yellow-300 transition">
       <img src="https://assets.onecompiler.app/43ea4pg72/43ejgfyu4/24-hours.png" class="w-7 h-7 mb-1" />
@@ -53,7 +47,7 @@
     </button>
   </div>
 
-  <!-- Firebase Initialization -->
+  <!-- Firebase Config -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
@@ -62,8 +56,7 @@
       projectId: "fir-bot-bd5e8",
       storageBucket: "fir-bot-bd5e8.appspot.com",
       messagingSenderId: "501448994050",
-      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
-      measurementId: "G-3ERPTBHN6N"
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -97,7 +90,6 @@
         }
       });
 
-      // Redirect to profile page
       document.getElementById("profileIcon").addEventListener("click", () => {
         window.location.href = "profile.html";
       });
