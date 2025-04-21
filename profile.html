@@ -75,6 +75,16 @@
       font-weight: bold;
     }
 
+    .copy-btn {
+      margin-left: 10px;
+      background: #eee;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
     #logoutBtn {
       padding: 12px;
       background: #ff4081;
@@ -101,11 +111,13 @@
 <body>
 
   <div class="profile-container">
+    <!-- Header -->
     <div class="header">
       <img src="https://img.icons8.com/ios/50/000000/crown.png" alt="Ludo King Logo" class="logo">
-      <h1>King of Ludo</h1>
+      <h1> King of Ludo </h1>
     </div>
 
+    <!-- Profile info -->
     <div class="profile-info">
       <div class="info-item">
         <img src="https://assets.onecompiler.app/43ea4pg72/43ffwhbqa/user.png" alt="Name Icon">
@@ -120,6 +132,7 @@
       <div class="info-item">
         <img src="https://assets.onecompiler.app/43ea4pg72/43ffywfa5/id%20(1).png" alt="UID Icon">
         <span id="uid">Loading...</span>
+        <button class="copy-btn" onclick="copyUID()">Copy</button>
       </div>
 
       <div class="info-item">
@@ -128,13 +141,14 @@
       </div>
     </div>
 
+    <!-- Logout button -->
     <button id="logoutBtn">Logout</button>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
@@ -143,12 +157,13 @@
       projectId: "fir-bot-bd5e8",
       storageBucket: "fir-bot-bd5e8.appspot.com",
       messagingSenderId: "501448994050",
-      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b"
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
+      measurementId: "G-3ERPTBHN6N"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
 
     const playerNameEl = document.getElementById('playerName');
     const emailEl = document.getElementById('email');
@@ -161,31 +176,31 @@
         const uid = user.uid;
         const email = user.email;
 
-        const userRef = doc(db, "users", uid);
-        const docSnap = await getDoc(userRef);
+        const userRef = ref(db, "users/" + uid);
+        const snapshot = await get(userRef);
 
-        let playerName;
-        let coins;
+        let playerName, coins;
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          playerName = data.playerName || "Player";
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          playerName = data.name || `Player${Math.floor(Math.random() * 10000)}`;
           coins = data.coins || 0;
         } else {
           playerName = `Player${Math.floor(Math.random() * 10000)}`;
           coins = 1000;
-          await setDoc(userRef, {
-            playerName,
-            email,
-            uid,
-            coins
+          await set(userRef, {
+            name: playerName,
+            email: email,
+            uid: uid,
+            coins: coins,
+            lastClaim: 0
           });
         }
 
         playerNameEl.textContent = playerName;
         emailEl.textContent = email;
         uidEl.textContent = uid;
-        coinsEl.textContent = `${coins} coins`;
+        coinsEl.textContent = `Coins: ${coins} (Total)`;
       } else {
         window.location.href = "login.html";
       }
@@ -196,6 +211,13 @@
         window.location.href = "login.html";
       });
     });
+
+    window.copyUID = function () {
+      const uidText = uidEl.textContent;
+      navigator.clipboard.writeText(uidText).then(() => {
+        alert("UID Copied!");
+      });
+    };
   </script>
 
 </body>
