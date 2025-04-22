@@ -1,3 +1,43 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>Premium Ludo Offer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translate(-50%, -60%);}
+      to {opacity: 1; transform: translate(-50%, -50%);}
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0;">
+
+  <!-- Premium Popup -->
+  <div id="premiumPopup" style="position:fixed; z-index:9999; top:50%; left:50%; transform:translate(-50%, -50%); background:linear-gradient(135deg, #1f1c2c, #928dab); color:white; padding:30px 20px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.5); width:90%; max-width:400px; font-family:'Noto Sans Bengali', sans-serif; display:none; animation:fadeIn 0.8s ease;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Premium" style="width:30px; height:30px; filter:drop-shadow(0 0 5px gold);">
+      <h2 style="margin:0; font-size:20px;">প্রিমিয়াম অফার</h2>
+    </div>
+    <p style="font-size:16px; line-height:1.6;">
+      সেইম ডিজাইন এর <b>প্রিমিয়াম লুডু গেম</b> তৈরি করতে পারবেন স্বল্প মূল্যে। সাথে এডমিন প্যানেল পাচ্ছেন <b>প্রিমিয়াম ফিচার</b> সহ।
+      <br><br>
+      <b>যোগাযোগ করুন:</b> <a href="https://wa.me/8801621439834" target="_blank" style="color:#00ffcc; text-decoration:none;">01621439834 (WhatsApp)</a>
+    </p>
+    <button onclick="document.getElementById('premiumPopup').style.display='none'" style="margin-top:20px; background:#00ffcc; color:#000; padding:10px 20px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">ঠিক আছে</button>
+  </div>
+
+  <!-- Popup Trigger Script -->
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('premiumPopup').style.display = 'block';
+      }, 1500);
+    });
+  </script>
+
+</body>
+</html>
 <!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
