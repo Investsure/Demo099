@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>কয়েন হিস্ট্রি - Ludo BD</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <script type="module">
+    // Firebase setup
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwiUR6oJRjTBFa2ajTdb-5Owc_I6Dw2S0",
+      authDomain: "fir-bot-bd5e8.firebaseapp.com",
+      databaseURL: "https://fir-bot-bd5e8-default-rtdb.firebaseio.com",
+      projectId: "fir-bot-bd5e8",
+      storageBucket: "fir-bot-bd5e8.firebasestorage.app",
+      messagingSenderId: "501448994050",
+      appId: "1:501448994050:web:fb1c102dcaeb23bf93261b",
+      measurementId: "G-3ERPTBHN6N"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        const q = query(collection(db, "coinHistory"), where("uid", "==", uid));
+        const querySnapshot = await getDocs(q);
+        const historyDiv = document.getElementById("history");
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const entry = document.createElement("div");
+          entry.className = "entry";
+
+          const iconType = data.type === "bonus" ? "redeem" : data.type === "daily" ? "card_giftcard" : "money_off";
+
+          entry.innerHTML = `
+            <span class="material-icons-outlined icon">${iconType}</span>
+            <div class="details">
+              <p class="desc">${data.type === "bonus" ? "বোনাস কয়েন" : data.type === "daily" ? "ডেইলি ফ্রি কয়েন" : "খরচ করা কয়েন"}</p>
+              <p class="amount">${data.amount} কয়েন</p>
+              <p class="time">${new Date(data.timestamp).toLocaleString()}</p>
+            </div>
+          `;
+          historyDiv.appendChild(entry);
+        });
+      } else {
+        document.getElementById("history").innerHTML = "<p>দয়া করে লগইন করুন।</p>";
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: gold;
+    }
+
+    .entry {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 15px;
+      border-radius: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease;
+    }
+
+    .entry:hover {
+      transform: scale(1.02);
+    }
+
+    .icon {
+      font-size: 36px;
+      margin-right: 15px;
+      color: #ffd700;
+    }
+
+    .details {
+      flex: 1;
+    }
+
+    .desc {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .amount {
+      font-size: 16px;
+      color: #b0e0e6;
+    }
+
+    .time {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    @media (max-width: 600px) {
+      .entry {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .icon {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>আপনার কয়েন হিস্ট্রি</h1>
+  <div id="history"></div>
+</body>
+</html>
